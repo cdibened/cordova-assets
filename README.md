@@ -18,15 +18,13 @@ Requires ImageMagick and its tools to be installed. They can be found here:  <ht
 Make sure that your input image for the icons is square in terms of dimensions. This makes it easier to scale.  In addition, the input image should be bigger (ex: 500x500px) than any of the icon sizes since scaling down is generally better than scaling up. However, since you have fewer pixels to work with, it's inevitable that some of your detail is going to be lost. However, I'll will try and add sharpening to the images to try and minimize the loss and possibly add support for increasing DPI.
 
 <pre>
-    cordova-assets [options] input.png
-    OR
     cga [options] input.png
 </pre>
 
 ```
 options:
     -p         - comma delimited (no spaces) platforms to generate assets for.
-                Current valid platforms are: ios, android.
+                Current valid platforms are: ios android bb10 wp8 ff amazon.
                 Default is all.
 ```
 
