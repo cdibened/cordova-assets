@@ -3,13 +3,13 @@
     var clc = require('cli-color'),
         im = require('imagemagick'),
         mkdirp = require('mkdirp'),
-        iconDirectory = './cga/android/icons/',
-        splashDirectory = './cga/android/splashscreens/',
-        iconNameList = ['ldpi', 'mdpi', 'hdpi', 'xhdpi', 'xxhdpi'],
+        iconDirectory = './cga/bb10/icons/',
+        splashDirectory = './cga/bb10/splashscreens/',
+        iconNameList = ['-86', '-150'],
         numOfIcons = iconNameList.length,
-        iconDimensions = [36, 48, 72, 96, 144],
+        iconDimensions = [86, 150],
         splashScreenNameList = ['~iphone', '@2x~iphone', '-Portrait~ipad', '-@2x~ipad', '-Landscape~ipad', '-Landscape@2x~ipad', '-568h@2x~iphone'],
-        splashScreenDimensions = ['320x480', '640x960', '784x1024', '1536x2048', '1024x768', '2048x1536', '640x1136'];
+        splashScreenDimensions = ['99x99', '159x159', '110x110', '1536x2048', '1024x768', '2048x1536', '640x1136'];
 
 
     function _generateIcons(input, cb) {
@@ -17,14 +17,14 @@
             var dim = iconDimensions[index];
             im.resize({
                 srcPath: input,
-                dstPath: iconDirectory + el + '.png',
+                dstPath: iconDirectory + 'icon' + el + '.png',
                 width: dim,
                 height: dim
             }, function (err, stdout, stderr) {
                 if (err) {
                     throw err;
                 }
-                console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + iconDirectory + el + '.png');
+                console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + iconDirectory + 'icon' + el + '.png');
                 if (numOfIcons === 1) {
                     numOfIcons = iconNameList.length;
                     cb();
@@ -56,7 +56,7 @@
                 console.error(err);
             }
             else {
-                console.log("Created Android icon directory.");
+                console.log("Created BB10 icon directory.");
                 _generateIcons(input, cb);
             }
         });

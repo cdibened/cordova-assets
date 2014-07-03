@@ -8,6 +8,9 @@
         updateNotifier = require('update-notifier'),
         ios = require('./platforms/ios'),
         android = require('./platforms/android'),
+        wp8 = require('./platforms/wp8'),
+        bb10 = require('./platforms/bb10'),
+        ff = require('./platforms/ff'),
         notified = true,
         knownOpts = {
             'platforms': String
@@ -18,7 +21,10 @@
         parsed = nopt(knownOpts, shortHands, process.argv, 2),
         platformArr = {
             'ios': ios,
-            'android': android
+            'android': android,
+            'wp8': wp8,
+            'bb10': bb10,
+            'ff': ff
         },
         args = process.argv.splice(2);
 
@@ -44,7 +50,7 @@
         console.log('');
         console.log('   options:');
         console.log('       -p         - comma delimited (no spaces) platforms to generate assets for.');
-        console.log('                    Current valid platforms are: ' + clc.magentaBright('ios android') + '.');
+        console.log('                    Current valid platforms are: ' + clc.magentaBright('ios android wp8 bb10 ff') + '.');
         console.log('                    Default is all.');
         console.log('');
         console.log('\nexample: cga -p ios,android icon.png');
