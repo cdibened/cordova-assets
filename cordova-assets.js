@@ -12,6 +12,8 @@
         bb10 = require('./platforms/bb10'),
         ff = require('./platforms/ff'),
         amazon = require('./platforms/amazon'),
+        pkg = require('./package.json'),
+
         notified = true,
         knownOpts = {
             'platforms': String
@@ -35,7 +37,8 @@
         notified = false;
         // Checks for available update and returns an instance
         var notifier = updateNotifier({
-            packagePath: './package.json',
+            packageName: pkg.name,
+            packageVersion: pkg.version,
             updateCheckInterval: 1000 * 60 * 60 * 24
         });
         if (notifier.update) {
