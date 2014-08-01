@@ -1,10 +1,12 @@
 (function () {
     'use strict';
-    var clc = require('cli-color'),
+    var fs = require('fs'),
+        clc = require('cli-color'),
         im = require('imagemagick'),
         mkdirp = require('mkdirp'),
-        iconDirectory = './cga/android/icons/',
-        splashDirectory = './cga/android/splashscreens/',
+        mainDirectory = './cga/android/',
+        iconDirectory = mainDirectory + 'icons/',
+        splashDirectory = mainDirectory + 'splashscreens/',
         iconNameList = ['ldpi', 'mdpi', 'hdpi', 'xhdpi', 'xxhdpi'],
         numOfIcons = iconNameList.length,
         iconDimensions = [36, 48, 72, 96, 144],
@@ -13,6 +15,12 @@
 
 
     function _generateIcons(input, cb) {
+        var wstream = fs.createWriteStream(mainDirectory+'android.xml');
+        wstream.on('finish', function () {
+          console.log('android config.xml has been written.');
+        });
+        wstream.write('<platform name="android">\n');
+
         iconNameList.forEach(function (el, index) {
             var dim = iconDimensions[index];
             im.resize({
@@ -25,8 +33,11 @@
                     throw err;
                 }
                 console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + iconDirectory + el + '.png');
+                wstream.write('    <icon src="android/icons/'+ el +'.png" density="'+el+'" />\n');
                 if (numOfIcons === 1) {
                     numOfIcons = iconNameList.length;
+                    wstream.write('</platform>');
+                    wstream.end();
                     cb();
                 }
                 else {

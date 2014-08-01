@@ -1,10 +1,12 @@
 (function () {
     'use strict';
-    var clc = require('cli-color'),
+    var fs = require('fs'),
+        clc = require('cli-color'),
         im = require('imagemagick'),
         mkdirp = require('mkdirp'),
-        iconDirectory = './cga/ff/icons/',
-        splashDirectory = './cga/ff/splashscreens/',
+        mainDirectory = './cga/ff/',
+        iconDirectory = mainDirectory + 'icons/',
+        splashDirectory = mainDirectory + 'splashscreens/',
         iconNameList = ['logo'],
         numOfIcons = iconNameList.length,
         iconDimensions = [60],
@@ -13,6 +15,12 @@
 
 
     function _generateIcons(input, cb) {
+        var wstream = fs.createWriteStream(mainDirectory+'firefoxos.xml');
+        wstream.on('finish', function () {
+          console.log('firefoxos config.xml has been written.');
+        });
+        wstream.write('<platform name="firefoxos">\n');
+
         iconNameList.forEach(function (el, index) {
             var dim = iconDimensions[index];
             im.resize({
@@ -25,8 +33,11 @@
                     throw err;
                 }
                 console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + iconDirectory + el + '.png');
+                wstream.write('    <icon src="ff/icons/'+ el +'.png" width="'+dim+'" height="'+dim+'" />\n');
                 if (numOfIcons === 1) {
                     numOfIcons = iconNameList.length;
+                    wstream.write('</platform>');
+                    wstream.end();
                     cb();
                 }
                 else {

@@ -1,10 +1,12 @@
 (function () {
     'use strict';
-    var clc = require('cli-color'),
+    var fs = require('fs'),
+        clc = require('cli-color'),
         im = require('imagemagick'),
         mkdirp = require('mkdirp'),
-        iconDirectory = './cga/bb10/icons/',
-        splashDirectory = './cga/bb10/splashscreens/',
+        mainDirectory = './cga/bb10/',
+        iconDirectory = mainDirectory + 'icons/',
+        splashDirectory = mainDirectory + 'splashscreens/',
         iconNameList = ['-86', '-150'],
         numOfIcons = iconNameList.length,
         iconDimensions = [86, 150],
@@ -13,6 +15,12 @@
 
 
     function _generateIcons(input, cb) {
+        var wstream = fs.createWriteStream(mainDirectory+'bb10.xml');
+        wstream.on('finish', function () {
+          console.log('bb10 config.xml has been written.');
+        });
+        wstream.write('<platform name="blackberry10">\n');
+
         iconNameList.forEach(function (el, index) {
             var dim = iconDimensions[index];
             im.resize({
@@ -25,8 +33,11 @@
                     throw err;
                 }
                 console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + iconDirectory + 'icon' + el + '.png');
+                wstream.write('    <icon src="bb10/icons/icon'+ el +'.png" />\n');
                 if (numOfIcons === 1) {
                     numOfIcons = iconNameList.length;
+                    wstream.write('</platform>');
+                    wstream.end();
                     cb();
                 }
                 else {
