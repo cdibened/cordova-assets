@@ -29,9 +29,9 @@ options:
 ```
 
 ###Examples
-pga -p ios icon.png
+cga -p ios icon.png
 
-- will generate all the icons for iOS using icon.png as the master file under a directory `./pga/ios/icons`
+- will generate all the icons for iOS using icon.png as the master file under a directory `./cga/ios/icons`
 
 
 ###TO-DO
