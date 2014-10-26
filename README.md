@@ -47,5 +47,4 @@ cga -t svg icon
 
 - Add support for generating splashscreens
 - Add support for sharpening, changing DPI, ...
-- Add support to specify output directory
 - Optimize and clean up code
