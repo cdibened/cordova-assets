@@ -1,8 +1,8 @@
 {
     "name": "cordova-assets",
-    "version": "0.0.3",
+    "version": "1.0.0",
     "author": "Cesidio DiBenedetto <sid.dibenedetto@gmail.com>",
-    "description": "Generate all icons, splashscreens for given platforms",
+    "description": "Generate all Cordova/Phonegap icons, splashscreens for given platforms",
     "keywords": [
         "cordova",
         "phonegap",
@@ -29,7 +29,8 @@
         "mkdirp": ">=0.5.0",
         "prompt": ">=0.2.*",
         "imagemagick": ">=0.1.3",
-        "update-notifier": ">=0.1.10"
+        "update-notifier": ">=0.1.10",
+        "phantomjs": ">=1.9.7-1"
     },
     "engines": {
         "node": ">=0.10.0"
