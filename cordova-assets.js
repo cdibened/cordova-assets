@@ -36,16 +36,16 @@
         args = process.argv.splice(2);
 
 
-        if (args.indexOf('--no-update-notifier') === -1) {
+    if (args.indexOf('--no-update-notifier') === -1) {
             notified = true;
-            // Checks for available update and returns an instance
+        // Checks for available update and returns an instance
             var notifier = updateNotifier( { packageName: pkg.name, 
                 packageVersion: pkg.version, updateCheckInterval: 1000 * 60 * 60 * 24 } );
-            if (notifier.update) {
-                // Notify using the built-in convenience method
-                notifier.notify(true);
-            }
+        if (notifier.update) {
+            // Notify using the built-in convenience method
+            notifier.notify(true);
         }
+    }
 
     function usage() {
         console.log('');

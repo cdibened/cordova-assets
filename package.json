@@ -1,6 +1,6 @@
 {
     "name": "cordova-assets",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "Cesidio DiBenedetto <sid.dibenedetto@gmail.com>",
     "description": "Generate all Cordova/Phonegap icons, splashscreens for given platforms",
     "keywords": [

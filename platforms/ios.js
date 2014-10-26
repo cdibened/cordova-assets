@@ -1,11 +1,13 @@
 (function () {
     'use strict';
-    var clc = require('cli-color'),
+    var fs = require('fs'),
+        clc = require('cli-color'),
         im = require('imagemagick'),
         mkdirp = require('mkdirp'),
         svg2png = require("../util/svg2png"),
-        iconDirectory = '/ios/icons/',
-        splashDirectory = '/ios/splashscreens/',
+        rootDirectory = '/ios',
+        iconDirectory = rootDirectory + '/icons/',
+        splashDirectory = rootDirectory + '/splashscreens/',
         iconNameList = ['', '@2x', '-40', '-40@2x', '-50', '-50@2x', '-60', '-60@2x', '-72', '-72@2x', '-76', '-76@2x', '-small', '-small@2x'],
         iconDimensions = [57, 114, 40, 80, 50, 100, 60, 120, 72, 144, 76, 152, 29, 58],
         numOfIcons = iconNameList.length,
@@ -13,16 +15,25 @@
         splashScreenDimensions = ['320x480', '640x960', '784x1024', '1536x2048', '1024x768', '2048x1536', '640x1136'];
 
     function _generateIcons(input, output, type, cb) {
+        var wstream = fs.createWriteStream(output+rootDirectory +'/ios.xml');
+        wstream.on('finish', function () {
+          console.log('ios config.xml has been written.');
+        });
+        wstream.write('<platform name="ios">\n');
+
         if( type === 'svg' ) {
             iconNameList.forEach(function (el, index) {
                 var dim = iconDimensions[index];
-                svg2png(input, output + 'icon' + el + '.png', 'w' + dim, function (err) {
+                svg2png(input, output + iconDirectory + 'icon' + el + '.png', 'w' + dim, function (err) {
                     if (err) {
                         throw err;
                     }
-                    console.log('Converted ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + 'icon' + el + '.png');
+                    console.log('Converted ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
+                    wstream.write('    <icon src="ios/icons/icon'+ el +'.png" width="'+dim+'" height="'+dim+'" />\n');
                     if (numOfIcons === 1) {
                         numOfIcons = iconNameList.length;
+                        wstream.write('</platform>');
+                        wstream.end();
                         cb();
                     }
                     else {
@@ -34,26 +45,29 @@
         else if( type === 'png' ) {
             iconNameList.forEach(function (el, index) {
                 var dim = iconDimensions[index];
-                im.resize({
-                    srcPath: input,
-                    dstPath: output + 'icon' + el + '.png',
-                    width: dim,
-                    height: dim
-                }, function (err, stdout, stderr) {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + 'icon' + el + '.png');
-                    if (numOfIcons === 1) {
-                        numOfIcons = iconNameList.length;
-                        cb();
-                    }
-                    else {
-                        numOfIcons--;
-                    }
-                });
+            im.resize({
+                srcPath: input,
+                    dstPath: output + iconDirectory + 'icon' + el + '.png',
+                width: dim,
+                height: dim
+            }, function (err, stdout, stderr) {
+                if (err) {
+                    throw err;
+                }
+                console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
+                wstream.write('    <icon src="ios/icons/icon'+ el +'.png" width="'+dim+'" height="'+dim+'" />\n');
+                if (numOfIcons === 1) {
+                    numOfIcons = iconNameList.length;
+                    wstream.write('</platform>');
+                    wstream.end();
+                    cb();
+                }
+                else {
+                    numOfIcons--;
+                }
             });
-        }
+        });
+    }
     }
 
     // function _generateSplashScreens(input) {
@@ -71,13 +85,13 @@
     // }
 
     function _generate(input, output, type, cb) {
-        mkdirp(output + iconDirectory, function (err) {
+        mkdirp(output + rootDirectory, function (err) {
             if (err) {
                 console.error(err);
             }
             else {
                 console.log("Created iOS icon directory.");
-                _generateIcons(input, output + iconDirectory, type, cb);
+                _generateIcons(input, output, type, cb);
             }
         });
         // mkdirp(splashDirectory, function (err) {
