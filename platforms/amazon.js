@@ -1,11 +1,11 @@
-(function () {
+(function() {
     'use strict';
     var fs = require('fs'),
         clc = require('cli-color'),
         im = require('imagemagick'),
         mkdirp = require('mkdirp'),
         svg2png = require("../util/svg2png"),
-        rootDirectory = '/amazon',        
+        rootDirectory = '/amazon',
         iconDirectory = rootDirectory + '/icons/',
         splashDirectory = rootDirectory + '/splashscreens/',
         iconNameList = ['ldpi', 'mdpi', 'hdpi', 'xhdpi', 'xxhdpi'],
@@ -15,59 +15,67 @@
         splashScreenDimensions = ['320x480', '640x960', '784x1024', '1536x2048', '1024x768', '2048x1536', '640x1136'];
 
     function _generateIcons(input, output, type, cb) {
-        var wstream = fs.createWriteStream(output+rootDirectory +'/amazon.xml');
-        wstream.on('finish', function () {
-          console.log('amazon-fireos config.xml has been written.');
+        var wstream = fs.createWriteStream(output + rootDirectory + '/amazon.xml');
+        wstream.on('finish', function() {
+            console.log('amazon-fireos config.xml has been written.');
         });
-        wstream.write('<platform name="amazon-fireos">\n');        
-        if( type === 'svg' ) {
-            iconNameList.forEach(function (el, index) {
-                var dim = iconDimensions[index];
-                svg2png(input, output + iconDirectory + 'icon' + el + '.png', 'w' + dim, function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('Converted ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
-                    wstream.write('    <icon src="amazon/icons/'+ el +'.png" density="'+el+'" />\n');
-                    if (numOfIcons === 1) {
-                        numOfIcons = iconNameList.length;
-                        wstream.write('</platform>');
-                        wstream.end();
-                        cb();
-                    }
-                    else {
-                        numOfIcons--;
-                    }
-
-                });
+        wstream.write('<platform name="amazon-fireos">\n');
+        if (type === 'svg') {
+            mkdirp(output + iconDirectory, function(err) {
+                if (err) {
+                    console.error(err);
+                } else {
+                    iconNameList.forEach(function(el, index) {
+                        var dim = iconDimensions[index];
+                        svg2png(input, output + iconDirectory + 'icon' + el + '.png', 'w' + dim, function(err) {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log('Converted ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
+                            wstream.write('    <icon src="amazon/icons/' + el + '.png" density="' + el + '" />\n');
+                            if (numOfIcons === 1) {
+                                numOfIcons = iconNameList.length;
+                                wstream.write('</platform>');
+                                wstream.end();
+                                cb();
+                            } else {
+                                numOfIcons--;
+                            }
+                        });
+                    });
+                }
+            });
+        } else if (type === 'png') {
+            mkdirp(output + iconDirectory, function(err) {
+                if (err) {
+                    console.error(err);
+                } else {
+                    iconNameList.forEach(function(el, index) {
+                        var dim = iconDimensions[index];
+                        im.resize({
+                            srcPath: input,
+                            dstPath: output + iconDirectory + 'icon' + el + '.png',
+                            width: dim,
+                            height: dim
+                        }, function(err, stdout, stderr) {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
+                            wstream.write('    <icon src="amazon/icons/' + el + '.png" density="' + el + '" />\n');
+                            if (numOfIcons === 1) {
+                                numOfIcons = iconNameList.length;
+                                wstream.write('</platform>');
+                                wstream.end();
+                                cb();
+                            } else {
+                                numOfIcons--;
+                            }
+                        });
+                    });
+                }
             });
         }
-        else if( type === 'png' ) {
-            iconNameList.forEach(function (el, index) {
-                var dim = iconDimensions[index];
-            im.resize({
-                srcPath: input,
-                    dstPath: output + iconDirectory + 'icon' + el + '.png',
-                width: dim,
-                height: dim
-            }, function (err, stdout, stderr) {
-                if (err) {
-                    throw err;
-                }
-                console.log('Resized ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
-                wstream.write('    <icon src="amazon/icons/'+ el +'.png" density="'+el+'" />\n');
-                if (numOfIcons === 1) {
-                    numOfIcons = iconNameList.length;
-                    wstream.write('</platform>');
-                    wstream.end();
-                    cb();
-                }
-                else {
-                    numOfIcons--;
-                }
-            });
-        });
-    }
     }
 
     // function _generateSplashScreens(input) {
@@ -85,11 +93,10 @@
     // }
 
     function _generate(input, output, type, cb) {
-        mkdirp(output + rootDirectory, function (err) {
+        mkdirp(output + rootDirectory, function(err) {
             if (err) {
                 console.error(err);
-            }
-            else {
+            } else {
                 console.log("Created Amazon icon directory.");
                 _generateIcons(input, output, type, cb);
             }
