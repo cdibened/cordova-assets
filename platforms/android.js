@@ -33,7 +33,7 @@
                                 throw err;
                             }
                             console.log('Converted ' + input + ' to fit within ' + clc.yellowBright(dim + 'x' + dim) + ' under ' + output + iconDirectory + 'icon' + el + '.png');
-                            wstream.write('    <icon src="android/icons/' + el + '.png" density="' + el + '" />\n');
+                            wstream.write('    <icon src="android/icons/icon' + el + '.png" density="' + el + '" />\n');
                             if (numOfIcons === 1) {
                                 numOfIcons = iconNameList.length;
                                 wstream.write('</platform>');
